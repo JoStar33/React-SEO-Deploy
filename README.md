@@ -1,30 +1,39 @@
-# React + TypeScript + Vite
+### CMD 명령어
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- CMD 명령어는 컨테이너가 시작될 때 기본적으로 실행할 명령어를 지정
+- 하지만, **docker run** 명령을 실행할 때 컨테이너 실행과 관련된 추가 인자를 제공하면, 해당 인자가 CMD로 지정한 명령어를 덮어쓴다
+- 컨테이너 실행 시 실행할 기본 명령어를 설정하는 데 사용되며, 일반적으로 애플리케이션의 진입점을 지정하는 용도로 활용
+- 명령어를 배열 형태로 지정할 수 있음
 
-Currently, two official plugins are available:
+### ENTRYPOINT
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- ENTRYPOINT 명령어는 컨테이너가 시작될 때 항상 실행할 명령어를 지정
+- docker run 명령을 통해 컨테이너를 실행할 때 추가 인자로 덮어쓸 수 없음.
+- 추가 인자는 ENTRYPOINT로 지정한 명령어의 인자로 전달.
+- 일반적으로 애플리케이션의 핵심 실행 파일 또는 실행 가능한 스크립트를 지정하는 데 사용
+- CMD와 달리 ENTRYPOINT는 배열 형태로 지정하지 않으면 기본 셸에 의해 실행
 
-## Expanding the ESLint configuration
+### docker build
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+docker를 빌드하여 이미지를 생성해두는 명령어.
 
-- Configure the top-level `parserOptions` property like this:
+- -t, --tag: 빌드된 이미지에 태그를 지정. 이미지이름:태그 형식으로 사용.
+- -f, --file: 사용할 도커파일의 경로를 지정다. 기본값은 ./Dockerfile
+- -q, --quiet: 빌드 진행 상황 메시지를 출력하지 않음
+- --build-arg: 도커파일 내에서 ARG 지시문에 전달할 빌드 인자를 지정.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+### 진짜 실행해보자
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+#### 삽질의 시작
+
+- window에서 예제코드를 실행해보니까 제대로 실행이 안되는 이슈가 있었습니다.
+- COPY ./nginx/nginx.conf /etc/nginx/nginx.conf에서 /nginx/nginx.conf를 못찾는 문제였습니다.
+- 저는 이때 OS차이로 인해 발생한것은 아닐까 싶어서 linux환경을 조성해봤습니다.
+- WSL을 설치하고 docker를 실행하도록 만들었으나 똑같이 실행이 안됐네요.
+- 그래서 뭐가 문제일까 싶어서 경로설정이 틀렸는지 자료조사를 해봤지만 그 문제는 아니였습니다.
+- 잘 생각해보니 ./nginx/nginx.conf를 루트 경로에 생성하지 않아서 생긴 문제는 아닐까 싶었습니다.
+- nginx.conf를 직접 찾아낸다음 루트경로에 파일을 생성해봤습니다.
+- 빌드도 되고 실행도 되긴하는데 localhost:3000에 접속이 안됐습니다.
+- 결국 "책에있는 예제대로 하지말고 걍 내가 직접 찾아서 해보자!"라는 결론이 났으며 아래 방법으로 실행하니까 잘 됐네요!
+- https://brick-house.tistory.com/15
+- 이게 이렇게까지 오래걸릴 문제였을까 싶었지만 그래도 Docker 명령어에 익숙해졌으며 vite에서 도커 설정을 어떻게 해야하는지도 생각해보는 시간이 돼서 유익했습니다.
