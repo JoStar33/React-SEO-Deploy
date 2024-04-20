@@ -5,24 +5,17 @@ services:
     restart: always
     container_name: nginx
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./Dockerfile
     ports:
       - "3000:80"
-    networks:
-      - frontend
 
   client:
     container_name: client
     build:
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
     volumes:
       - "./:/app"
       - "/app/node_modules"
-    networks:
-      - frontend
-
-networks:
-  frontend:
-    driver: bridge
+    stdin_open: true
