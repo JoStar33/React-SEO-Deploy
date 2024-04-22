@@ -1,12 +1,16 @@
 version: "3.7"
-
+# services: 자기가 원하는 여러 도커 컨테이너의 서비스들을 작성하는 곳.
 services:
+  # image는 해당 서비스에서 사용할 도커 이미지 이름을 정의.
   nginx:
     restart: always
+    # container_name: 컨테이너의 이름을 정의
     container_name: nginx
+    # build: Dockerfile을 사용하여 이미지를 빌드. 아래와 같이 Dockerfile의 위치를 명확히 정의해줘야함.
     build:
       context: ./
       dockerfile: ./Dockerfile
+    # ports: 컨테이너가 사용할 포트와 호스트에서 사용할 포트를 지정.
     ports:
       - "3000:80"
 
@@ -15,6 +19,7 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
+    # volumes: 컨테이너와 호스트 간의 데이터 공유를 위한 볼륨을 정의.
     volumes:
       - "./:/app"
       - "/app/node_modules"
