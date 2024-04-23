@@ -1,3 +1,6 @@
+## docker의 정의
+- https://www.redhat.com/ko/topics/containers/what-is-docker
+
 ## docker cli 명령어
 
 ### docker build
